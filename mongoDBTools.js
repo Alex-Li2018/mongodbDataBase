@@ -6,9 +6,14 @@
 
 //引入mongoDB组件
 const MongoClient = require('mongodb').MongoClient;
+//引入mongoDB操作_id的函数
+// const objectID = require('mongodb').ObjectId; 
 
 //将所有的方法封装到对象里
 const mongoDBTool = {
+
+    //操作_id的函数
+    objectID : require('mongodb').ObjectId,
 
     //配置mongo的参数
     mongoConfig : {
@@ -34,9 +39,9 @@ const mongoDBTool = {
 
     /**
      * 增
-     * @param {*} collectionName  表名
-     * @param {*} data  数据
-     * @param {*} insertCallback 操作后的回调 
+     * @param {* string} collectionName  表名
+     * @param {* arr or obj} data  数据
+     * @param {* function } insertCallback 操作后的回调 
      */
     insert(collectionName,data,insertCallback) {
 
@@ -61,10 +66,10 @@ const mongoDBTool = {
 
     /**
      * 删
-     * @param {*} flag 删除一条或多条 true : 一条; flase : 多条
-     * @param {*} collectionName 集合名
-     * @param {*} condition 删除的条件
-     * @param {*} deleteCallback 回调 
+     * @param {* blooern} flag 删除一条或多条 true : 一条; flase : 多条
+     * @param {* string} collectionName 集合名
+     * @param {* obj} condition 删除的条件
+     * @param {* function} deleteCallback 回调 
      */
     delete(flag,collectionName,condition,deleteCallback){
 
@@ -85,13 +90,13 @@ const mongoDBTool = {
 
     /**
      * 改
-     * @param {*} flag 更新一条或多条 true : 一条; flase : 多条
-     * @param {*} collectionName  集合名
-     * @param {*} data  更新数据
-     * @param {*} condition 更新的条件
-     * @param {*} updateCallback 回调 
+     * @param {* blooern} flag 更新一条或多条 true : 一条; flase : 多条
+     * @param {* string} collectionName  集合名
+     * @param {* obj} data  更新数据
+     * @param {* obj} condition 更新的条件
+     * @param {* function} updateCallback 回调 
      */
-    upadte(flag,collectionName,data,condition,updateCallback){
+    upadte(flag,collectionName,condition,data,updateCallback){
 
         if(typeof collectionName != 'string') {
             throw new Error('请检查传入的参数是否正确');
@@ -101,9 +106,9 @@ const mongoDBTool = {
             //取到想要的表
             const collection = db.collection(collectionName);
             if(flag) { //插入多条
-                collection.updateOne(data,condition,updateCallback);  
+                collection.updateOne(condition,{$set:data},updateCallback);  
             }else { //插入一条
-                collection.updateMany(data,condition,updateCallback); 
+                collection.updateMany(condition,{$set:data},updateCallback); 
             }
         });
 
@@ -111,9 +116,9 @@ const mongoDBTool = {
 
     /**
      * 查
-     * @param {*} collectionName  表名
-     * @param {*} condition  条件
-     * @param {*} findCallback  回调
+     * @param {* string} collectionName  表名
+     * @param {* obj} condition  条件
+     * @param {* function} findCallback  回调
      */
     find(collectionName,condition,findCallback){
 
